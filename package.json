@@ -1,0 +1,22 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "src/validateCredentials.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "coverage": "jest --coverage"
+  },
+  "keywords": [
+    "jest",
+    "unit-tests",
+    "validator",
+    "lab"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
