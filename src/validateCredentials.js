@@ -1,39 +1,49 @@
-export function validateCredentials(loginRaw, passwordRaw) {
-    const errors = {};
+async function validateCredentials(login, password, db) {
 
-    const login = (loginRaw ?? "").trim();
-    const password = (passwordRaw ?? "").trim();
-
-    // Пустые/пробельные строки
-    if (!login) {
-        errors.login = "Логин не может быть пустым или состоять только из пробелов.";
-    }
-    if (!password) {
-        errors.password = "Пароль не может быть пустым или состоять только из пробелов.";
+    // Проверка типов
+    if (typeof login !== "string" || typeof password !== "string") {
+        return { ok: false, error: "Логин и пароль должны быть строками" };
     }
 
-    // Логин: минимум 5
-    if (!errors.login && login.length < 5) {
-        errors.login = "Логин должен быть не короче 5 символов.";
+    const l = login.trim();
+    const p = password.trim();
+
+    // Пустые строки
+    if (!l || !p) {
+        return { ok: false, error: "Логин и пароль не должны быть пустыми" };
     }
 
-    // Пароль: минимум 8 + цифра + спецсимвол
-    if (!errors.password) {
-        if (password.length < 8) {
-            errors.password = "Пароль должен быть не короче 8 символов.";
-        } else {
-            const hasDigit = /\d/.test(password);
-            const hasSpecial = /[^\w\s]/.test(password);
-
-            if (!hasDigit && !hasSpecial) {
-                errors.password = "Пароль должен содержать хотя бы одну цифру и один спецсимвол.";
-            } else if (!hasDigit) {
-                errors.password = "Пароль должен содержать хотя бы одну цифру.";
-            } else if (!hasSpecial) {
-                errors.password = "Пароль должен содержать хотя бы один спецсимвол.";
-            }
-        }
+    // Логин: минимум 5 символов
+    if (l.length < 5) {
+        return { ok: false, error: "Логин слишком короткий" };
     }
 
-    return { ok: Object.keys(errors).length === 0, errors };
+    // Пароль: минимум 8 символов
+    if (p.length < 8) {
+        return { ok: false, error: "Пароль слишком короткий" };
+    }
+
+    // Пароль должен содержать цифру
+    if (!/\d/.test(p)) {
+        return { ok: false, error: "Пароль должен содержать хотя бы одну цифру" };
+    }
+
+    // Пароль должен содержать спецсимвол
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p)) {
+        return { ok: false, error: "Пароль должен содержать хотя бы один спецсимвол" };
+    }
+
+    // Проверяем уникальность логина через БД.
+    if (!db || typeof db.isLoginTaken !== "function") {
+        return { ok: false, error: "Не передан корректный адаптер БД" };
+    }
+
+    const taken = await db.isLoginTaken(l);
+    if (taken) {
+        return { ok: false, error: "Логин уже занят" };
+    }
+
+    return { ok: true };
 }
+
+module.exports = { validateCredentials };

@@ -1,11 +1,11 @@
 {
   "name": "project",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "description": "",
   "main": "src/validateCredentials.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "jest",
     "coverage": "jest --coverage"
   },
   "keywords": [
