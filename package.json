@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "start": "node server.js"
+    "start": "node src/server.js"
   },
   "keywords": [
     "jest",
