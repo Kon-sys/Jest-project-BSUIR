@@ -1,0 +1,274 @@
+{
+  "info": {
+    "_postman_id": "92f0662e-957b-4b38-82a7-213be2ca0367",
+    "name": "LR3 VARIANT 9",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "status",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "",
+              "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Response time < 200ms\", () => pm.expect(pm.response.responseTime).to.be.below(200));",
+              "",
+              "pm.test(\"Schema: status + timestamp\", () => {",
+              "  pm.expect(json).to.have.property(\"status\");",
+              "  pm.expect(json).to.have.property(\"timestamp\");",
+              "  pm.expect(json.status).to.eql(\"online\");",
+              "});",
+              "",
+              "pm.environment.set(\"last_check\", json.status);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/status",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "check-login",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "",
+              "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Response time < 200ms\", () => pm.expect(pm.response.responseTime).to.be.below(200));",
+              "",
+              "pm.test(\"Schema\", () => {",
+              "  pm.expect(json).to.have.all.keys(\"status\", \"login\", \"available\");",
+              "  pm.expect(json.status).to.eql(\"success\");",
+              "  pm.expect(json.login).to.be.a(\"string\");",
+              "  pm.expect(json.available).to.be.a(\"boolean\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/auth/check-login?name={{login}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "check-login"
+          ],
+          "query": [
+            {
+              "key": "name",
+              "value": "{{login}}",
+              "uuid": "e93d7b8a-a1b4-4c62-999b-4f74faaccba1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "register ok",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "",
+              "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+              "pm.test(\"Response time < 200ms\", () => pm.expect(pm.response.responseTime).to.be.below(200));",
+              "",
+              "pm.test(\"Schema\", () => {",
+              "  pm.expect(json).to.have.all.keys(\"status\", \"login\");",
+              "  pm.expect(json.status).to.eql(\"success\");",
+              "  pm.expect(json.login).to.eql(\"new_user_01\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"new_user_01\",\n  \"password\": \"Passw0rd!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "register bad",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "",
+              "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Response time < 200ms\", () => pm.expect(pm.response.responseTime).to.be.below(200));",
+              "",
+              "pm.test(\"Error schema\", () => {",
+              "  pm.expect(json).to.have.all.keys(\"status\", \"message\");",
+              "  pm.expect(json.status).to.eql(\"error\");",
+              "  pm.expect(json.message).to.be.a(\"string\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"new_user_02\",\n  \"password\": \"123!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      }
+    },
+    {
+      "name": "register 409",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "",
+              "pm.test(\"Status 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"Response time < 200ms\", () => pm.expect(pm.response.responseTime).to.be.below(200));",
+              "",
+              "pm.test(\"Message: login taken\", () => {",
+              "  pm.expect(json.status).to.eql(\"error\");",
+              "  pm.expect(json.message).to.eql(\"Логин уже занят\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"login\": \"admin\",\n  \"password\": \"Passw0rd!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      }
+    }
+  ]
+}
